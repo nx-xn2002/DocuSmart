@@ -28,7 +28,7 @@ create table if not exists template
 (
     id              bigint auto_increment comment 'id' primary key,
     description     varchar(512)                       not null comment '模板介绍',
-    preview         varchar(512)                       not null comment '略缩图地址',
+    preview         text                               not null comment '略缩图 base64',
     template_name   varchar(256)                       null comment '模版名称',
     template_file   varchar(512)                       not null comment '模版地址',
     template_json   varchar(512)                       not null comment '模版 json 表示',

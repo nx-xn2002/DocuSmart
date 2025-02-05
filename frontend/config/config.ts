@@ -73,7 +73,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'NXApi',
+  title: 'DocuSmart',
   layout: {
     locale: true,
     ...defaultSettings,
@@ -138,6 +138,11 @@ export default defineConfig({
       requestLibPath: "import { request } from '@umijs/max'",
       schemaPath: 'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
       projectName: 'swagger',
+    },
+    {
+      requestLibPath: "import { request } from '@umijs/max'",
+      schemaPath: 'http://localhost:8101/api/v3/api-docs/default',
+      projectName: 'docu_smart',
     },
   ],
   mfsu: {

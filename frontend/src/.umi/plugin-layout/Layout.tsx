@@ -88,7 +88,7 @@ export default (props: any) => {
   "fixedHeader": true,
   "fixSiderbar": true,
   "colorWeak": false,
-  "title": "NXApi",
+  "title": "DocuSmart",
   "pwa": true,
   "logo": "logo.svg",
   "iconfontUrl": "",

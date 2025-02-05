@@ -31,6 +31,7 @@
             >
               <option value="openapi">openapi</option>
 <option value="swagger">swagger</option>
+<option value="docu_smart">docu_smart</option>
             </select>
             <div id="swagger-ui" />
           </div>

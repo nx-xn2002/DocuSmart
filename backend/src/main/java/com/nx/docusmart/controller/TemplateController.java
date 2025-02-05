@@ -55,8 +55,8 @@ public class TemplateController {
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
-        long newApiInfoId = template.getId();
-        return ResultUtils.success(newApiInfoId);
+        long newTemplateId = template.getId();
+        return ResultUtils.success(newTemplateId);
     }
 
     /**
@@ -89,7 +89,7 @@ public class TemplateController {
      */
     @PostMapping("/update")
     @AuthCheck(mustRole = "admin")
-    public BaseResponse<Boolean> updateApiInfo(@RequestBody TemplateUpdateRequest templateUpdateRequest) {
+    public BaseResponse<Boolean> updateTemplate(@RequestBody TemplateUpdateRequest templateUpdateRequest) {
         if (templateUpdateRequest == null || templateUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -114,7 +114,7 @@ public class TemplateController {
      * @return {@link BaseResponse }<{@link Template }>
      */
     @GetMapping("/get")
-    public BaseResponse<Template> getApiInfoById(long id) {
+    public BaseResponse<Template> getTemplateById(long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -130,7 +130,7 @@ public class TemplateController {
      */
     @AuthCheck(mustRole = "admin")
     @GetMapping("/list")
-    public BaseResponse<List<Template>> listApiInfo(TemplateQueryRequest templateQueryRequest) {
+    public BaseResponse<List<Template>> listTemplate(TemplateQueryRequest templateQueryRequest) {
         Template templateQuery = new Template();
         if (templateQueryRequest != null) {
             BeanUtils.copyProperties(templateQueryRequest, templateQuery);
@@ -147,7 +147,7 @@ public class TemplateController {
      * @return {@link BaseResponse }<{@link Page }<{@link Template }>>
      */
     @GetMapping("/list/page")
-    public BaseResponse<Page<Template>> listApiInfoByPage(TemplateQueryRequest templateQueryRequest) {
+    public BaseResponse<Page<Template>> listTemplateByPage(TemplateQueryRequest templateQueryRequest) {
         if (templateQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
