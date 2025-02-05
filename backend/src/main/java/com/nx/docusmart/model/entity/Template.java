@@ -4,19 +4,19 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 
 import java.util.Date;
 
+import lombok.Data;
+
 /**
- * 接口信息表
+ * 模版
  *
  * @author nx-xn2002
- * @date 2025-01-12
  */
-@TableName(value = "api_info")
+@TableName(value = "template")
 @Data
-public class ApiInfo {
+public class Template {
     /**
      * id
      */
@@ -24,44 +24,34 @@ public class ApiInfo {
     private Long id;
 
     /**
-     * 接口名称
-     */
-    private String name;
-
-    /**
-     * 接口描述
+     * 模板介绍
      */
     private String description;
 
     /**
-     * 接口地址
+     * 略缩图地址
      */
-    private String url;
+    private String preview;
 
     /**
-     * 请求头
+     * 模版名称
      */
-    private String requestHeader;
+    private String templateName;
 
     /**
-     * 响应头
+     * 模版地址
      */
-    private String responseHeader;
+    private String templateFile;
 
     /**
-     * 接口状态 0-关闭 1-开启
+     * 模版 json 表示
      */
-    private Integer status;
+    private String templateJson;
 
     /**
-     * 请求类型
+     * 模版 prompt 工程
      */
-    private String method;
-
-    /**
-     * 创建人id
-     */
-    private Long userId;
+    private String templatePrompt;
 
     /**
      * 创建时间
@@ -74,7 +64,7 @@ public class ApiInfo {
     private Date updateTime;
 
     /**
-     * 逻辑删除 默认 - 0
+     * 是否删除
      */
     @TableLogic
     private Integer isDeleted;

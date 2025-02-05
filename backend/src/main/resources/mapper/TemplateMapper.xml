@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nx.docusmart.mapper.TemplateMapper">
+
+    <resultMap id="BaseResultMap" type="com.nx.docusmart.model.entity.Template">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="preview" column="preview" jdbcType="VARCHAR"/>
+            <result property="templateName" column="template_name" jdbcType="VARCHAR"/>
+            <result property="templateFile" column="template_file" jdbcType="VARCHAR"/>
+            <result property="templateJson" column="template_json" jdbcType="VARCHAR"/>
+            <result property="templatePrompt" column="template_prompt" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,description,preview,
+        template_name,template_file,template_json,
+        template_prompt,create_time,update_time,
+        is_deleted
+    </sql>
+</mapper>

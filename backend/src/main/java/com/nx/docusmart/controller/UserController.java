@@ -31,7 +31,6 @@ import static com.nx.docusmart.service.impl.UserServiceImpl.SALT;
  * 用户接口
  *
  * @author nx-xn2002
- * @date 2025-01-11
  */
 @RestController
 @RequestMapping("/user")
@@ -44,8 +43,8 @@ public class UserController {
     /**
      * 用户注册
      *
-     * @param userRegisterRequest
-     * @return
+     * @param userRegisterRequest user register request
+     * @return {@link BaseResponse }<{@link Long }>
      */
     @PostMapping("/register")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {

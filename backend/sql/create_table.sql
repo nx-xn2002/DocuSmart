@@ -22,3 +22,20 @@ create table if not exists user
     update_time  datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     is_deleted   tinyint      default 0                 not null comment '是否删除'
 ) comment '用户';
+
+-- 模版表
+create table if not exists template
+(
+    id              bigint auto_increment comment 'id' primary key,
+    description     varchar(512)                       not null comment '模板介绍',
+    preview         varchar(512)                       not null comment '略缩图地址',
+    template_name   varchar(256)                       null comment '模版名称',
+    template_file   varchar(512)                       not null comment '模版地址',
+    template_json   varchar(512)                       not null comment '模版 json 表示',
+    template_prompt text                               not null comment '模版 prompt 工程',
+    create_time     datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time     datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    is_deleted      tinyint  default 0                 not null comment '是否删除'
+) comment '模版';
+
+
