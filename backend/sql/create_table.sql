@@ -21,7 +21,7 @@ create table if not exists user
     create_time  datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time  datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     is_deleted   tinyint      default 0                 not null comment '是否删除'
-) comment '用户';
+) comment '用户表';
 
 -- 模版表
 create table if not exists template
@@ -36,7 +36,22 @@ create table if not exists template
     create_time     datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time     datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     is_deleted      tinyint  default 0                 not null comment '是否删除'
-) comment '模版';
+) comment '模版表';
+
+-- 生成表
+create table if not exists generate
+(
+    id            bigint auto_increment comment 'id' primary key,
+    template_id   bigint                                 not null comment '模板id',
+    user_id       bigint                                 not null comment '用户id',
+    info          text comment '其它信息 json 格式',
+    upload_file   text                                   not null comment '上传文件地址 json 数组格式',
+    generate_file varchar(512)                           not null comment '生成文件地址',
+    process       varchar(128) default 'start'           not null comment '生成进展 start/fail/success',
+    create_time   datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time   datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    is_deleted    tinyint      default 0                 not null comment '是否删除'
+) comment '生成表';
 
 #插入示例模板
 INSERT INTO docu_smart.template (description, preview, template_name, template_file, template_json, template_prompt,
