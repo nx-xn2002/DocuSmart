@@ -145,7 +145,6 @@ public class TongYiManager {
         } catch (Exception e) {
             log.error("请求失败: {}", e.getMessage(), e);
         }
-
         return null;
     }
 
