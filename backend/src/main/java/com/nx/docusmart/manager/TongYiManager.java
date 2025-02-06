@@ -2,6 +2,7 @@ package com.nx.docusmart.manager;
 
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -73,8 +77,13 @@ public class TongYiManager {
 
     /**
      * 发送聊天请求
+     *
+     * @param content  content
+     * @param prompt   prompt
+     * @param fileList file list
+     * @return {@link String }
      */
-    public void chat(String content, String prompt, List<MultipartFile> fileList) {
+    public String chat(String content, String prompt, List<MultipartFile> fileList) {
         String authorizationHeader = "Bearer " + apiKey;
         List<Map<String, String>> messages = new ArrayList<>();
         // 添加 System 信息
@@ -85,11 +94,15 @@ public class TongYiManager {
         // 上传文件并添加文件id
         if (fileList != null) {
             for (MultipartFile file : fileList) {
-                String fileId = uploadFile(file);
-                if (fileId != null) {
-                    messages.add(createMessage("system", "fileid://" + fileId));
-                    // 保存文件ID
-                    fileIds.add(fileId);
+                try {
+                    String fileId = uploadFile(file);
+                    if (fileId != null) {
+                        messages.add(createMessage("system", "fileid://" + fileId));
+                        // 保存文件ID
+                        fileIds.add(fileId);
+                    }
+                } catch (Exception e) {
+                    log.error("文件上传失败: {}", e.getMessage(), e);
                 }
             }
         }
@@ -103,9 +116,6 @@ public class TongYiManager {
         Map<String, Object> requestData = new HashMap<>();
         requestData.put("model", "qwen-long");
         requestData.put("messages", messages);
-//        //流式输出
-//        requestData.put("stream", true);
-//        requestData.put("stream_options", Collections.singletonMap("include_usage", true));
         try (HttpResponse response = HttpRequest.post(modelUrl)
                 .header("Authorization", authorizationHeader)
                 .header("Content-Type", "application/json")
@@ -116,12 +126,30 @@ public class TongYiManager {
             log.info("Response: {}", responseBody);
             // 请求返回后，删除上传的文件
             for (String fileId : fileIds) {
-                deleteFile(fileId);
+                try {
+                    deleteFile(fileId);
+                } catch (Exception e) {
+                    log.error("文件删除失败: {}", e.getMessage(), e);
+                }
+            }
+            try {
+                // 将字符串转换为JSONObject
+                JSONObject jsonObject = JSONUtil.parseObj(responseBody);
+                return jsonObject.getJSONArray("choices")
+                        .getJSONObject(0)
+                        .getJSONObject("message")
+                        .getStr("content");
+            } catch (Exception e) {
+                log.error("提取内容时发生错误: {}", e.getMessage(), e);
             }
         } catch (Exception e) {
-            log.error("请求失败", e);
+            log.error("请求失败: {}", e.getMessage(), e);
         }
+
+        return null;
     }
+
+
 
     private Map<String, String> createMessage(String role, String content) {
         Map<String, String> message = new HashMap<>();

@@ -36,7 +36,6 @@ public class GenerateController {
     @PostMapping("/chat")
     public void chat(List<MultipartFile> fileList, String content, String prompt) {
         log.info("content:{} prompt:{}", content, prompt);
-        tongYiManager.chat(content, prompt, fileList);
+        System.out.println(tongYiManager.chat(content, prompt, fileList));
     }
-
 }
