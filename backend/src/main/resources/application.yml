@@ -59,3 +59,9 @@ knife4j:
   enable: true
   setting:
     language: zh_cn
+tong-yi:
+  apiKey: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  # 最大单个文件大小 5MB
+  max-file-size: 5242880
+  file-manage-url: https://dashscope.aliyuncs.com/compatible-mode/v1/files
+  model-url: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions

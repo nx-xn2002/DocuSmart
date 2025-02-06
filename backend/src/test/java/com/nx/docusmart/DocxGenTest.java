@@ -2,6 +2,7 @@ package com.nx.docusmart;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.nx.docusmart.manager.TongYiManager;
 import com.nx.docusmart.model.entity.Template;
 import com.nx.docusmart.service.TemplateService;
 import jakarta.annotation.Resource;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,6 +28,8 @@ import java.util.List;
 public class DocxGenTest {
     @Resource
     private TemplateService templateService;
+    @Resource
+    private TongYiManager tongYiManager;
 
     @Test
     public void TestCreateFile() throws IOException {
@@ -53,6 +57,14 @@ public class DocxGenTest {
         }
     }
 
+    @Test
+    public void test2() {
+        //Response: {"id":"file-fe-eXYmvM5tPvHLQDVtU52Xd9ae","object":"file","bytes":13010,"created_at":1738805202,
+        // "filename":"blank.docx","purpose":"file-extract","status":"processed"}
+        //tongYiManager.uploadFile(new File("src/main/resources/template/doc/blank.docx"));
+//tongYiManager.deleteFile("file-fe-eXYmvM5tPvHLQDVtU52Xd9ae");
+    }
+
     /**
      * 替换模板中的占位符
      *
@@ -60,25 +72,6 @@ public class DocxGenTest {
      * @param placeholder placeholder
      * @param replacement replacement
      */
-//    private static void replacePlaceholder(XWPFDocument document, String placeholder, String replacement) {
-//        // 遍历所有段落
-//        for (XWPFParagraph paragraph : document.getParagraphs()) {
-//            for (XWPFRun run : paragraph.getRuns()) {
-//                String text = run.getText(0);
-//                if (text != null && text.contains(placeholder)) {
-//                    String[] split = replacement.split("\n");
-//                    for (int i = 0; i < split.length; i++) {
-//                        text = text.replace(placeholder, split[i]);
-//                        // 替换内容
-//                        run.setText(split[i], i);
-//                        if (i != split.length - 1) {
-//                            run.addBreak();
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
     private static void replacePlaceholder(XWPFDocument document, String placeholder, String replacement) {
         for (XWPFParagraph paragraph : document.getParagraphs()) {
             String paragraphText = paragraph.getText();
