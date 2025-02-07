@@ -41,6 +41,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseString = {
+    code?: number;
+    data?: string;
+    message?: string;
+  };
+
   type BaseResponseTemplate = {
     code?: number;
     data?: Template;
@@ -61,6 +67,12 @@ declare namespace API {
 
   type DeleteRequest = {
     id?: number;
+  };
+
+  type generateDocumentParams = {
+    fileList: string[];
+    content: string;
+    templateId: number;
   };
 
   type getTemplateByIdParams = {
@@ -219,9 +231,7 @@ declare namespace API {
     sortField?: string;
     sortOrder?: string;
     id?: number;
-    unionId?: string;
-    mpOpenId?: string;
-    userName?: string;
+    username?: string;
     userProfile?: string;
     userRole?: string;
   };

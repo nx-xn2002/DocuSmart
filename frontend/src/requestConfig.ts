@@ -22,9 +22,9 @@ interface ResponseStructure {
 export const requestConfig: RequestConfig = {
   baseURL: 'http://localhost:8101/api',
   withCredentials: true,
+
   // 错误处理： umi@3 的错误处理方案。
   errorConfig: {
-    // 错误抛出
     errorThrower: (res) => {
       const { success, data, errorCode, errorMessage, showType } =
         res as unknown as ResponseStructure;
@@ -32,7 +32,7 @@ export const requestConfig: RequestConfig = {
         const error: any = new Error(errorMessage);
         error.name = 'BizError';
         error.info = { errorCode, errorMessage, showType, data };
-        throw error; // 抛出自制的错误
+        throw error;
       }
     },
   },
@@ -40,8 +40,7 @@ export const requestConfig: RequestConfig = {
   // 请求拦截器
   requestInterceptors: [
     (config: RequestOptions) => {
-      // 拦截请求配置，进行个性化处理。
-      const url = config?.url?.concat('?token = 123');
+      const url = config?.url?.concat('?token=123'); // 例如传递token
       return { ...config, url };
     },
   ],
@@ -49,11 +48,20 @@ export const requestConfig: RequestConfig = {
   // 响应拦截器
   responseInterceptors: [
     (response) => {
-      // 拦截响应数据，进行个性化处理
+      // 检查响应的类型
+      const contentType = response.headers['content-type'];
+
+      // 如果响应类型是二进制流（.docx文件）
+      if (contentType && contentType.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
+        return response; // 对于二进制文件，直接返回响应，避免触发错误处理
+      }
+
+      // 如果是 JSON 响应，继续按原逻辑处理
       const { data } = response as unknown as ResponseStructure;
       if (data.code !== 0) {
         throw new Error(data.message);
       }
+
       return response;
     },
   ],
