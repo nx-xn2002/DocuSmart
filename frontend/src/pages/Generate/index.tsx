@@ -11,6 +11,7 @@ import {
   Image,
   Input,
   message,
+  notification,
   Radio,
   RadioChangeEvent,
   Row,
@@ -62,49 +63,81 @@ const Generate: React.FC = () => {
     if (submitting) return;
     setSubmitting(true);
 
-    // 获取上传的文件列表
-    const files = values.fileList ? values.fileList.map((file: any) => file.originFileObj) : [];
     console.log('提交的数据：', {
       templateId: selectedTemplate?.id !== undefined ? selectedTemplate?.id : -1,
       content: values.content,
-      fileList: files, // 输出文件列表
     });
 
     const param = {
       templateId: selectedTemplate?.id !== undefined ? selectedTemplate?.id : -1,
       content: values.content,
-      fileList: files, // 将文件列表添加到参数中
     };
+
+    const formData = new FormData();
+    // 将文件添加到 formData 中
+    fileList.forEach((file) => {
+      formData.append('files', file.originFileObj);
+    });
+
+    // 添加其他请求参数
+    formData.append('templateId', param.templateId.toString());
+    formData.append('content', param.content);
 
     try {
       console.log('开始调用生成文档接口...');
 
-      // 调用生成文档 API
-      const res = await generateDocument(param, {}, files);
-      const base64Str = res.data; // 假设返回值包含在data字段内
-      const byteCharacters = atob(base64Str ? base64Str : ''); // 解码Base64字符串
-      const byteArrays = [];
+      // 调用生成文档 API，传递 params, body 和 files
+      const res = await generateDocument(
+        { ...param }, // 参数
+        {}, // body，按需传递
+        formData, // 文件数据
+        {}, // options（可选）
+      );
+      if (res.data) {
+        const base64Str = res.data; // 假设返回值包含在data字段内
+        const byteCharacters = atob(base64Str ? base64Str : ''); // 解码Base64字符串
+        const byteArrays = [];
 
-      for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-        const slice = byteCharacters.slice(offset, offset + 1024);
-        const byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i++) {
-          byteNumbers[i] = slice.charCodeAt(i);
+        for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+          const slice = byteCharacters.slice(offset, offset + 1024);
+          const byteNumbers = new Array(slice.length);
+          for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          byteArrays.push(byteArray);
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
+        const blob = new Blob(byteArrays, {
+          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        });
+
+        // 创建一个下载链接
+        const downloadLink = URL.createObjectURL(blob);
+        const fileName = values.fileName ? values.fileName + '.docx' : 'GeneratedDocument.docx';
+
+        // 使用 notification 显示下载链接
+        notification.success({
+          message: '文件生成成功',
+          description: (
+            <span>
+              点击此链接下载文档:{' '}
+              <a href={downloadLink} download={fileName}>
+                下载文件
+              </a>
+            </span>
+          ),
+          duration: 10,
+        });
       }
-      const blob = new Blob(byteArrays, {
-        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'GeneratedDocument.docx'; // 设置下载的文件名
-      link.click(); // 点击下载链接
       setSubmitting(false);
     } catch (e: any) {
       // 细化错误日志
-      console.error('文件生成失败：', e);
+      notification.error({
+        message: '文件生成失败',
+        description: e.message,
+        showProgress: true,
+        duration: 10,
+      });
       if (e.response) {
         console.error('接口响应错误：', e.response);
       } else if (e.message) {
@@ -138,12 +171,12 @@ const Generate: React.FC = () => {
                     <Radio value={template} required={true}>
                       <Card
                         hoverable
-                        style={{ width: '100%' }}
+                        style={{ width: 180 }}
                         cover={
                           <Image
                             src={`data:image/png;base64,${template.preview}`}
                             alt={template.templateName}
-                            style={{ height: 60, objectFit: 'cover' }}
+                            style={{ height: 90, objectFit: 'cover' }}
                           />
                         }
                       >

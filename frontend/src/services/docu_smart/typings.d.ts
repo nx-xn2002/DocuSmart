@@ -70,7 +70,6 @@ declare namespace API {
   };
 
   type generateDocumentParams = {
-    fileList: string[];
     content: string;
     templateId: number;
   };

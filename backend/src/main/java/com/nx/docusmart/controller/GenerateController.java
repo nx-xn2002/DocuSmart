@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -123,7 +124,7 @@ public class GenerateController {
 //        }
 //    }
     @PostMapping("/doc")
-    public BaseResponse<String> generateDocument(List<MultipartFile> fileList,
+    public BaseResponse<String> generateDocument(List<MultipartFile> files,
                                                  String content, Long templateId) {
         // 参数检查
         if (StringUtils.isBlank(content) || templateId == null) {
@@ -137,9 +138,9 @@ public class GenerateController {
             log.error("模板不存在: templateId={}", templateId);
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "模板不存在");
         }
-
+        log.info("用户上传了{}个文件", files != null ? files.size() : 0);
         // 与大模型进行交互
-        String jsonResponse = tongYiManager.chat(content, template.getTemplatePrompt(), fileList);
+        String jsonResponse = tongYiManager.chat(content, template.getTemplatePrompt(), files);
         if (jsonResponse == null) {
             log.error("大模型服务异常: templateId={}, content={}", templateId, content);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "大模型服务异常");
