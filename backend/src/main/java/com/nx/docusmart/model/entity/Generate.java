@@ -12,7 +12,7 @@ import lombok.Data;
 /**
  * 生成表
  *
- * @author nx-xn2002
+ * @TableName generate
  */
 @TableName(value = "generate")
 @Data

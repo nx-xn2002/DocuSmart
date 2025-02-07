@@ -2,7 +2,9 @@ package com.nx.docusmart.controller;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.nx.docusmart.common.BaseResponse;
 import com.nx.docusmart.common.ErrorCode;
+import com.nx.docusmart.common.ResultUtils;
 import com.nx.docusmart.exception.BusinessException;
 import com.nx.docusmart.manager.TongYiManager;
 import com.nx.docusmart.model.entity.Template;
@@ -26,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -42,9 +45,86 @@ public class GenerateController {
     @Resource
     private TemplateService templateService;
 
+    //    @PostMapping("/doc")
+//    public ResponseEntity<InputStreamResource> generateDocument(List<MultipartFile> fileList,
+//                                                                String content, Long templateId, String fileName) {
+//        // 参数检查
+//        if (StringUtils.isBlank(content) || templateId == null) {
+//            log.error("参数错误: content 或 templateId 为空");
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+//        }
+//
+//        // 获取模板
+//        Template template = templateService.getById(templateId);
+//        if (template == null) {
+//            log.error("模板不存在: templateId={}", templateId);
+//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "模板不存在");
+//        }
+//
+//        // 与大模型进行交互
+//        String jsonResponse = tongYiManager.chat(content, template.getTemplatePrompt(), fileList);
+//        if (jsonResponse == null) {
+//            log.error("大模型服务异常: templateId={}, content={}", templateId, content);
+//            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "大模型服务异常");
+//        }
+//
+//        // 检查返回的 JSON 格式
+//        if (!JSONUtil.isTypeJSON(jsonResponse)) {
+//            log.error("大模型返回非JSON格式: {}", jsonResponse);
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR, jsonResponse);
+//        }
+//
+//        JSONObject jsonObject = JSONUtil.parseObj(jsonResponse);
+//
+//        // 读取模板文件
+//        ClassPathResource resource = new ClassPathResource(template.getTemplateFile());
+//        String path = null;
+//        try {
+//            path = resource.getFile().getPath();
+//            log.info("模板文件路径: {}", path);
+//        } catch (IOException e) {
+//            log.error("读取模板文件失败: templateFile={}, 错误信息={}", template.getTemplateFile(), e.getMessage());
+//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "模板不存在");
+//        }
+//
+//        JSONObject templateJson = JSONUtil.parseObj(template.getTemplateJson());
+//
+//        // 使用 ByteArrayOutputStream 代替文件生成
+//        try (FileInputStream templateFile = new FileInputStream(path);
+//             XWPFDocument document = new XWPFDocument(templateFile);
+//             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+//
+//            log.info("开始替换模板中的占位符...");
+//            for (String placeholderKey : templateJson.keySet()) {
+//                if (jsonObject.containsKey(placeholderKey)) {
+//                    log.info("正在替换占位符: {}", placeholderKey);
+//                    replacePlaceholder(document, "^^" + placeholderKey + "^^", (String) jsonObject.get
+//                    (placeholderKey));
+//                }
+//            }
+//            // 将文档内容写入到 ByteArrayOutputStream
+//            document.write(byteArrayOutputStream);
+//            byte[] documentContent = byteArrayOutputStream.toByteArray();
+//            log.info("文档生成成功，准备返回给前端");
+//
+//            // 返回文件流给前端
+//            InputStreamResource inputStreamResource =
+//                    new InputStreamResource(new ByteArrayInputStream(documentContent));
+//            fileName = StringUtils.isBlank(fileName) ? "GeneratedDocument.docx" : fileName + ".docx";
+//
+//            // 返回 ResponseEntity，不要返回 BaseResponse
+//            return ResponseEntity.ok()
+//                    .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
+//                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                    .body(inputStreamResource);
+//        } catch (IOException e) {
+//            log.error("处理文档生成失败: 错误信息={}", e.getMessage());
+//            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "文档生成失败");
+//        }
+//    }
     @PostMapping("/doc")
-    public ResponseEntity<InputStreamResource> generateDocument(List<MultipartFile> fileList,
-                                                                String content, Long templateId, String fileName) {
+    public BaseResponse<String> generateDocument(List<MultipartFile> fileList,
+                                                 String content, Long templateId) {
         // 参数检查
         if (StringUtils.isBlank(content) || templateId == null) {
             log.error("参数错误: content 或 templateId 为空");
@@ -103,16 +183,11 @@ public class GenerateController {
             byte[] documentContent = byteArrayOutputStream.toByteArray();
             log.info("文档生成成功，准备返回给前端");
 
-            // 返回文件流给前端
-            InputStreamResource inputStreamResource =
-                    new InputStreamResource(new ByteArrayInputStream(documentContent));
-            fileName = StringUtils.isBlank(fileName) ? "GeneratedDocument.docx" : fileName + ".docx";
+            // 将字节数组转换为 Base64 字符串
+            String base64Str = Base64.getEncoder().encodeToString(documentContent);
 
-            // 返回 ResponseEntity，不要返回 BaseResponse
-            return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=\"" + fileName + "\"")
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(inputStreamResource);
+            // 返回 Base64 字符串
+            return ResultUtils.success(base64Str);
         } catch (IOException e) {
             log.error("处理文档生成失败: 错误信息={}", e.getMessage());
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "文档生成失败");
