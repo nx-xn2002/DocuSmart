@@ -44,7 +44,7 @@ public class GenerateController {
 
     @PostMapping("/doc")
     public ResponseEntity<InputStreamResource> generateDocument(List<MultipartFile> fileList,
-                                                                String content, Long templateId) {
+                                                                String content, Long templateId, String fileName) {
         // 参数检查
         if (StringUtils.isBlank(content) || templateId == null) {
             log.error("参数错误: content 或 templateId 为空");
@@ -106,7 +106,7 @@ public class GenerateController {
             // 返回文件流给前端
             InputStreamResource inputStreamResource =
                     new InputStreamResource(new ByteArrayInputStream(documentContent));
-            String fileName = "GeneratedDocument.docx";
+            fileName = StringUtils.isBlank(fileName) ? "GeneratedDocument.docx" : fileName + ".docx";
 
             // 返回 ResponseEntity，不要返回 BaseResponse
             return ResponseEntity.ok()

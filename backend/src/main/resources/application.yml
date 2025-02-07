@@ -60,7 +60,7 @@ knife4j:
   setting:
     language: zh_cn
 tong-yi:
-  apiKey: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  apiKey: sk-ccc2a81c11f248b0a387e773c0f8c97e
   # 最大单个文件大小 5MB
   max-file-size: 5242880
   file-manage-url: https://dashscope.aliyuncs.com/compatible-mode/v1/files
