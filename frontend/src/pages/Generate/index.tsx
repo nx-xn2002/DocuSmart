@@ -1,6 +1,6 @@
 import { generateDocument } from '@/services/docu_smart/generateController';
 import { listTemplateByPage } from '@/services/docu_smart/templateController';
-import { UploadOutlined } from '@ant-design/icons';
+import { InboxOutlined } from '@ant-design/icons';
 import '@umijs/max';
 import {
   Button,
@@ -16,13 +16,12 @@ import {
   RadioChangeEvent,
   Row,
   Space,
-  Typography,
   Upload,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 
+const { Dragger } = Upload;
 const { useBreakpoint } = Grid;
-const { Text } = Typography;
 const { TextArea } = Input;
 const { Meta } = Card;
 
@@ -149,7 +148,7 @@ const Generate: React.FC = () => {
 
   return (
     <div className="add-chart-async">
-      <Card title="公文生成" style={{ width: '90%', maxWidth: '90%' }}>
+      <Card title="公文生成" style={{ width: '100%', maxWidth: '100%' }}>
         <Form
           name="add-chart"
           labelAlign="left"
@@ -160,9 +159,6 @@ const Generate: React.FC = () => {
             templateId: -1,
           }}
         >
-          <Form.Item name="fileName" label="文件名（选填）">
-            <Input showCount maxLength={40} placeholder="请输入目标文件名" />
-          </Form.Item>
           <Form.Item name="templateId" label="公文模板" wrapperCol={{ span: 12 }}>
             <Radio.Group onChange={onChange} value={selectedTemplate}>
               <Row gutter={[{ xs: 96, sm: 120, md: 144, lg: 192 }, 24]}>
@@ -190,7 +186,7 @@ const Generate: React.FC = () => {
           </Form.Item>
           <Form.Item
             name="content"
-            label={<Text>{tip}</Text>}
+            label={tip}
             labelAlign="left"
             labelCol={{ span: 24 }}
             wrapperCol={{ span: 20 }}
@@ -199,8 +195,15 @@ const Generate: React.FC = () => {
           >
             <TextArea showCount maxLength={800} placeholder="描述信息" />
           </Form.Item>
-          <Form.Item name="file" label="参考文档" extra="支持文件类型.docx">
-            <Upload
+          <Form.Item
+            name="file"
+            extra="仅支持纯文本文件"
+            wrapperCol={{ span: 20 }}
+            label={"参考资料（可选择进行上传）"}
+            labelAlign="left"
+            labelCol={{ span: 24 }}
+          >
+            <Dragger
               name="fileList"
               multiple
               maxCount={5}
@@ -210,10 +213,18 @@ const Generate: React.FC = () => {
               }}
               fileList={fileList} // 这里绑定 fileList
             >
-              <Button icon={<UploadOutlined />}>上传文件</Button>
-            </Upload>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">点击或将文件拖拽到此处上传</p>
+              <p className="ant-upload-hint">
+                支持单个或批量上传。严禁上传涉密数据或其他被禁止的文件。
+              </p>
+            </Dragger>
           </Form.Item>
-
+          <Form.Item name="fileName" label="生成文件名（可选择填写）">
+            <Input showCount maxLength={40} placeholder="请输入目标文件名" />
+          </Form.Item>
           <Form.Item wrapperCol={{ span: 20, offset: 4 }}>
             <Space direction={screens.sm ? 'horizontal' : 'vertical'}>
               <Button type="primary" htmlType="submit" loading={submitting}>

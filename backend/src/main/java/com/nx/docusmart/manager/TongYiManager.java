@@ -116,6 +116,7 @@ public class TongYiManager {
         Map<String, Object> requestData = new HashMap<>();
         requestData.put("model", "qwen-long");
         requestData.put("messages", messages);
+        requestData.put("response_format", Map.of("type", "json_object"));
         try (HttpResponse response = HttpRequest.post(modelUrl)
                 .header("Authorization", authorizationHeader)
                 .header("Content-Type", "application/json")
