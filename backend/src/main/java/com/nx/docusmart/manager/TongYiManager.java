@@ -15,6 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * tong yi manager
+ *
+ * @author nx-xn2002
+ */
 @Service
 @Slf4j
 public class TongYiManager {

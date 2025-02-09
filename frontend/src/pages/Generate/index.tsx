@@ -125,7 +125,7 @@ const Generate: React.FC = () => {
               </a>
             </span>
           ),
-          duration: 10,
+          duration: 0,
         });
       }
       setSubmitting(false);
@@ -134,8 +134,7 @@ const Generate: React.FC = () => {
       notification.error({
         message: '文件生成失败',
         description: e.message,
-        showProgress: true,
-        duration: 10,
+        duration: 0,
       });
       if (e.response) {
         console.error('接口响应错误：', e.response);
