@@ -95,3 +95,17 @@ xxxx年，在xxx的领导下，坚持xxx的精神，完成了xxx的目标。现�
 -- user表插入数据
 INSERT INTO docu_smart.user (account, password, username, access_key, secret_key, user_avatar, user_profile, user_role, create_time, update_time, is_deleted) VALUES ('guest', 'f04273b3d7bfae95174011bee119ac8e', 'guest', '123456', '123456', '/images/default_avatar.png', null, 'user', '2025-02-03 14:16:02', '2025-02-07 10:13:55', 1);
 INSERT INTO docu_smart.user (account, password, username, access_key, secret_key, user_avatar, user_profile, user_role, create_time, update_time, is_deleted) VALUES ('nixiang2002', 'dbe6eb3c11e17e787f9aacc6abaa041f', 'nixiang2002', '123456', '123456', '/images/default_avatar.png', null, 'admin', '2025-02-05 10:15:34', '2025-02-05 10:16:16', 0);
+
+
+-- 文件生成记录
+
+-- auto-generated definition
+create table doc_gen_record
+(
+    id          int auto_increment
+        primary key,
+    user_id     mediumtext   null,
+    file_name   varchar(100) null,
+    file_path   varchar(100) null,
+    create_date date         null
+);

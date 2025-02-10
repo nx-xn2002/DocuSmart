@@ -137,6 +137,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return currentUser;
     }
 
+    @Override
+    public User getLoginUserById(String userId) {
+        User currentUser = this.getById(userId);
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        return currentUser;
+    }
+
     /**
      * 获取当前登录用户（允许未登录）
      *

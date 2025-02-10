@@ -1,5 +1,6 @@
 package com.nx.docusmart.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.nx.docusmart.common.BaseResponse;
@@ -8,7 +9,9 @@ import com.nx.docusmart.common.ResultUtils;
 import com.nx.docusmart.exception.BusinessException;
 import com.nx.docusmart.manager.TongYiManager;
 import com.nx.docusmart.model.entity.Template;
+import com.nx.docusmart.model.entity.User;
 import com.nx.docusmart.service.TemplateService;
+import com.nx.docusmart.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +26,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -45,6 +50,10 @@ public class GenerateController {
     private TongYiManager tongYiManager;
     @Resource
     private TemplateService templateService;
+    @Resource
+    private UserService userService;
+    @Resource
+    private FileController fileController;
 
     //    @PostMapping("/doc")
 //    public ResponseEntity<InputStreamResource> generateDocument(List<MultipartFile> fileList,
@@ -125,7 +134,8 @@ public class GenerateController {
 //    }
     @PostMapping("/doc")
     public BaseResponse<String> generateDocument(List<MultipartFile> files,
-                                                 String content, Long templateId) {
+                                                 String content, Long templateId, String fileName) {
+        String token = String.valueOf(StpUtil.getLoginId());
         // 参数检查
         if (StringUtils.isBlank(content) || templateId == null) {
             log.error("参数错误: content 或 templateId 为空");
@@ -182,6 +192,7 @@ public class GenerateController {
             // 将文档内容写入到 ByteArrayOutputStream
             document.write(byteArrayOutputStream);
             byte[] documentContent = byteArrayOutputStream.toByteArray();
+            fileController.saveDocFile(documentContent, fileName, token);
             log.info("文档生成成功，准备返回给前端");
 
             // 将字节数组转换为 Base64 字符串

@@ -1,5 +1,6 @@
 package com.nx.docusmart.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.nx.docusmart.annotation.AuthCheck;
 import com.nx.docusmart.common.BaseResponse;
@@ -80,6 +81,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
+        StpUtil.login(loginUserVO.getId());
         return ResultUtils.success(loginUserVO);
     }
 
@@ -95,6 +97,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         boolean result = userService.userLogout(request);
+        StpUtil.logout();
         return ResultUtils.success(result);
     }
 
